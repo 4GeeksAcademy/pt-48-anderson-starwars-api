@@ -73,7 +73,7 @@ def get_favourites():
 @app.route("/user/favourite", methods=["POST"])  
 def add_favourite():
     request_body = request.json
-    user_favourites = BDManagement.add_favourite(request.json["user_id"])
+    user_favourites = BDManagement.add_favourite(request_body)
     return jsonify({"message": "Favourite added", "updated_favourites": user_favourites}), 200
     
 
