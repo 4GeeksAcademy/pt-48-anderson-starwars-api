@@ -9,6 +9,7 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
+from service import BDManagement
 #from models import Person
 
 app = Flask(__name__)
@@ -36,14 +37,83 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+@app.route("/user", methods=["GET"])
+def get_user_list():
+    user_list = BDManagement.get_user_list()
+    return jsonify(user_list), 200
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+@app.route("/user/<int:user_id>", methods=["GET"])
+def get_user_by_id(user_id):
+    filtered_user = BDManagement.get_user_by_id(user_id)
+    return jsonify(filtered_user), 200
 
-    return jsonify(response_body), 200
+@app.route("/item", methods=["GET"])
+def get_item_list():
+    item_list = BDManagement.get_item_list()
+    return jsonify(item_list), 200
+
+@app.route("/item/<int:item_id>", methods=["GET"])
+def get_item_by_id(item_id):
+    item_filtered = BDManagement.get_item_by_id(item_id)
+    return jsonify(item_filtered), 200
+
+@app.route("/item", methods=["POST"])
+def add_new_item():
+    request_body = request.json
+    item_added = BDManagement.add_new_item(request_body)
+    return jsonify(item_added), 200
+
+@app.route("/user/favourite", methods=["GET"])  
+def get_favourites():
+    request_body = request.json
+    filtered_favourites = BDManagement.get_favourites(request_body)
+    return jsonify(filtered_favourites), 200
+
+
+@app.route("/user/favourite", methods=["POST"])  
+def add_favourite():
+    request_body = request.json
+    user_favourites = BDManagement.add_favourite(request.json["user_id"])
+    return jsonify({"message": "Favourite added", "updated_favourites": user_favourites}), 200
+    
+
+@app.route("/character", methods=["GET"])
+def get_character_list():
+    character_list = BDManagement.get_character_list()
+    return jsonify(character_list), 200
+
+
+@app.route("/character/<int:character_id>", methods=["GET"])
+def get_character_by_id(character_id):
+    item_filtered = BDManagement.get_character_by_id(character_id)
+    return jsonify(item_filtered), 200
+
+
+@app.route("/planet", methods=["GET"])
+def get_planet_list():
+    planet_list = BDManagement.get_planet_list()
+    return jsonify(planet_list), 200
+
+
+@app.route("/planet/<int:planet_id>", methods=["GET"])
+def get_planet_by_id(planet_id):
+    planet_filtered = BDManagement.get_planet_by_id(planet_id)
+    return jsonify(planet_filtered), 200
+
+
+@app.route("/starship", methods=["GET"])
+def get_starship_list():
+    starship_list = BDManagement.get_starship_list()
+    return jsonify(starship_list), 200
+
+
+@app.route("/starship/<int:starship_id>", methods=["GET"])
+def get_starship_by_id(starship_id):
+    starship_filtered = BDManagement.get_starship_by_id(starship_id)
+    return jsonify(starship_filtered), 200
+
+
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':

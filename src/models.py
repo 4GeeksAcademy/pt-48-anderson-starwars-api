@@ -1,4 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+
 
 db = SQLAlchemy()
 
@@ -34,7 +37,7 @@ class Item(db.Model):
     favourites = db.relationship("Favourite", back_populates="items")
 
     def __repr__(self):
-        return "<Item %r>" % self.name
+        return "<Item %r>" % {self.name, self.id}
 
     def serialize(self):
         return {
@@ -152,3 +155,10 @@ class Favourite(db.Model):
             "description": self.items.description,
             "img": self.items.img,
         }
+    
+engine = create_engine(
+    "postgresql://gitpod:postgres@localhost:5432/example"
+    ) 
+db.Model.metadata.create_all(engine) 
+Session = sessionmaker(bind=engine)
+session = Session()
